@@ -6,10 +6,13 @@ if [ -r "/proc/uptime" ]; then
     total_seconds="$seconds"
     break
   done < /proc/uptime
-else
+elif [ -x /sbin/sysctl ]; then
   boottime=`sysctl -n kern.boottime | awk '{print $4}' | sed 's/,//g'`
   unixtime=`date +%s`
   total_seconds=$(($unixtime - $boottime))
+else
+	echo -n `uptime`
+	return
 fi
 
 days=$(( total_seconds / 60 / 60 / 24 ))
